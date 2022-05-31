@@ -679,7 +679,7 @@ extension DropDown {
 
 	fileprivate func computeLayout() -> (x: CGFloat, y: CGFloat, width: CGFloat, offscreenHeight: CGFloat, visibleHeight: CGFloat, canBeDisplayed: Bool, Direction: Direction) {
 		var layout: ComputeLayoutTuple = (0, 0, 0, 0)
-		var direction = self.direction
+//		var direction = self.direction
 
 		guard let window = UIWindow.visibleWindow() else { return (0, 0, 0, 0, 0, false, direction) }
 
