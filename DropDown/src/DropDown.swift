@@ -101,7 +101,14 @@ public final class DropDown: UIView {
         imgv.frame = CGRect(x: 0, y: -10, width: 15, height: 10)
         return imgv
     }()
+    
+    /**
+    The action to execute when `Direction` was updated.
 
+    See `Direction` enum for more info.
+    */
+    
+    public var onDirectionUpdated: Closure?
 
 	/// The view to which the drop down will displayed onto.
 	public weak var anchorView: AnchorView? {
@@ -113,7 +120,11 @@ public final class DropDown: UIView {
 
 	See `Direction` enum for more info.
 	*/
-	public var direction = Direction.any
+    public var direction = Direction.any {
+        didSet {
+            onDirectionUpdated?()
+        }
+    }
 
 	/**
 	The offset point relative to `anchorView` when the drop down is shown above the anchor view.
