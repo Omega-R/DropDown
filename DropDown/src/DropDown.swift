@@ -12,6 +12,7 @@ import UIKit
 
 public typealias Index = Int
 public typealias Closure = () -> Void
+public typealias DirectionClosure = (Direction) -> Void
 public typealias SelectionClosure = (Index, String) -> Void
 public typealias MultiSelectionClosure = ([Index], [String]) -> Void
 public typealias ConfigurationClosure = (Index, String) -> String
@@ -108,7 +109,7 @@ public final class DropDown: UIView {
     See `Direction` enum for more info.
     */
     
-    public var onDirectionUpdated: Closure?
+    public var onDirectionUpdated: DirectionClosure?
 
 	/// The view to which the drop down will displayed onto.
 	public weak var anchorView: AnchorView? {
@@ -120,11 +121,7 @@ public final class DropDown: UIView {
 
 	See `Direction` enum for more info.
 	*/
-    public var direction = Direction.any {
-        didSet {
-            onDirectionUpdated?()
-        }
-    }
+    public var direction = Direction.any
 
 	/**
 	The offset point relative to `anchorView` when the drop down is shown above the anchor view.
@@ -501,7 +498,7 @@ public final class DropDown: UIView {
 
 	- returns: A new instance of a drop down customized with the above parameters.
 	*/
-    public convenience init(anchorView: AnchorView, selectionAction: SelectionClosure? = nil, dataSource: [String] = [], topOffset: CGPoint? = nil, bottomOffset: CGPoint? = nil, cellConfiguration: ConfigurationClosure? = nil, cancelAction: Closure? = nil, onDirectionUpdated: Closure? = nil) {
+    public convenience init(anchorView: AnchorView, selectionAction: SelectionClosure? = nil, dataSource: [String] = [], topOffset: CGPoint? = nil, bottomOffset: CGPoint? = nil, cellConfiguration: ConfigurationClosure? = nil, cancelAction: Closure? = nil, onDirectionUpdated: DirectionClosure? = nil) {
 		self.init(frame: .zero)
 
 		self.anchorView = anchorView
@@ -679,7 +676,7 @@ extension DropDown {
 
 	fileprivate func computeLayout() -> (x: CGFloat, y: CGFloat, width: CGFloat, offscreenHeight: CGFloat, visibleHeight: CGFloat, canBeDisplayed: Bool, Direction: Direction) {
 		var layout: ComputeLayoutTuple = (0, 0, 0, 0)
-//		var direction = self.direction
+		var direction = self.direction
 
 		guard let window = UIWindow.visibleWindow() else { return (0, 0, 0, 0, 0, false, direction) }
 
@@ -726,7 +723,7 @@ extension DropDown {
 		
 		let visibleHeight = tableHeight - layout.offscreenHeight
 		let canBeDisplayed = visibleHeight >= minHeight
-
+        onDirectionUpdated?(direction)
 		return (layout.x, layout.y, layout.width, layout.offscreenHeight, visibleHeight, canBeDisplayed, direction)
 	}
 
