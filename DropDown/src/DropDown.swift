@@ -492,6 +492,7 @@ public final class DropDown: UIView {
 
 	- parameter anchorView:        The view to which the drop down will displayed onto.
 	- parameter selectionAction:   The action to execute when the user selects a cell.
+    - parameter onDirectionUpdated:The action to execute when `Direction` changes.
 	- parameter dataSource:        The data source for the drop down.
 	- parameter topOffset:         The offset point relative to `anchorView` used when drop down is displayed on above the anchor view.
 	- parameter bottomOffset:      The offset point relative to `anchorView` used when drop down is displayed on below the anchor view.
@@ -500,11 +501,12 @@ public final class DropDown: UIView {
 
 	- returns: A new instance of a drop down customized with the above parameters.
 	*/
-	public convenience init(anchorView: AnchorView, selectionAction: SelectionClosure? = nil, dataSource: [String] = [], topOffset: CGPoint? = nil, bottomOffset: CGPoint? = nil, cellConfiguration: ConfigurationClosure? = nil, cancelAction: Closure? = nil) {
+    public convenience init(anchorView: AnchorView, selectionAction: SelectionClosure? = nil, dataSource: [String] = [], topOffset: CGPoint? = nil, bottomOffset: CGPoint? = nil, cellConfiguration: ConfigurationClosure? = nil, cancelAction: Closure? = nil, onDirectionUpdated: Closure? = nil) {
 		self.init(frame: .zero)
 
 		self.anchorView = anchorView
 		self.selectionAction = selectionAction
+        self.onDirectionUpdated = onDirectionUpdated
 		self.dataSource = dataSource
 		self.topOffset = topOffset ?? .zero
 		self.bottomOffset = bottomOffset ?? .zero
