@@ -12,7 +12,6 @@ import UIKit
 
 public typealias Index = Int
 public typealias Closure = () -> Void
-public typealias DirectionClosure = (Direction) -> Void
 public typealias SelectionClosure = (Index, String) -> Void
 public typealias MultiSelectionClosure = ([Index], [String]) -> Void
 public typealias ConfigurationClosure = (Index, String) -> String
@@ -109,7 +108,7 @@ public final class DropDown: UIView {
     See `Direction` enum for more info.
     */
     
-    public var onDirectionUpdated: DirectionClosure?
+    public var onDirectionUpdated: ((Direction) -> Void)?
 
 	/// The view to which the drop down will displayed onto.
 	public weak var anchorView: AnchorView? {
@@ -498,7 +497,7 @@ public final class DropDown: UIView {
 
 	- returns: A new instance of a drop down customized with the above parameters.
 	*/
-    public convenience init(anchorView: AnchorView, selectionAction: SelectionClosure? = nil, dataSource: [String] = [], topOffset: CGPoint? = nil, bottomOffset: CGPoint? = nil, cellConfiguration: ConfigurationClosure? = nil, cancelAction: Closure? = nil, onDirectionUpdated: DirectionClosure? = nil) {
+    public convenience init(anchorView: AnchorView, selectionAction: SelectionClosure? = nil, dataSource: [String] = [], topOffset: CGPoint? = nil, bottomOffset: CGPoint? = nil, cellConfiguration: ConfigurationClosure? = nil, cancelAction: Closure? = nil, onDirectionUpdated: ((Direction) -> Void)? = nil) {
 		self.init(frame: .zero)
 
 		self.anchorView = anchorView
