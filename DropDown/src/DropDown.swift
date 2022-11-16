@@ -101,7 +101,14 @@ public final class DropDown: UIView {
         imgv.frame = CGRect(x: 0, y: -10, width: 15, height: 10)
         return imgv
     }()
+    
+    /**
+    The action to execute when `Direction` was updated.
 
+    See `Direction` enum for more info.
+    */
+    
+    public var onDirectionUpdated: ((Direction) -> Void)?
 
 	/// The view to which the drop down will displayed onto.
 	public weak var anchorView: AnchorView? {
@@ -113,7 +120,7 @@ public final class DropDown: UIView {
 
 	See `Direction` enum for more info.
 	*/
-	public var direction = Direction.any
+    public var direction = Direction.any
 
 	/**
 	The offset point relative to `anchorView` when the drop down is shown above the anchor view.
@@ -153,6 +160,10 @@ public final class DropDown: UIView {
 	public var width: CGFloat? {
 		didSet { setNeedsUpdateConstraints() }
 	}
+    
+    public var height: CGFloat? {
+        didSet { setNeedsUpdateConstraints() }
+    }
 
 	/**
 	arrowIndication.x
@@ -481,6 +492,7 @@ public final class DropDown: UIView {
 
 	- parameter anchorView:        The view to which the drop down will displayed onto.
 	- parameter selectionAction:   The action to execute when the user selects a cell.
+    - parameter onDirectionUpdated:The action to execute when `Direction` changes.
 	- parameter dataSource:        The data source for the drop down.
 	- parameter topOffset:         The offset point relative to `anchorView` used when drop down is displayed on above the anchor view.
 	- parameter bottomOffset:      The offset point relative to `anchorView` used when drop down is displayed on below the anchor view.
@@ -489,11 +501,12 @@ public final class DropDown: UIView {
 
 	- returns: A new instance of a drop down customized with the above parameters.
 	*/
-	public convenience init(anchorView: AnchorView, selectionAction: SelectionClosure? = nil, dataSource: [String] = [], topOffset: CGPoint? = nil, bottomOffset: CGPoint? = nil, cellConfiguration: ConfigurationClosure? = nil, cancelAction: Closure? = nil) {
+    public convenience init(anchorView: AnchorView, selectionAction: SelectionClosure? = nil, dataSource: [String] = [], topOffset: CGPoint? = nil, bottomOffset: CGPoint? = nil, cellConfiguration: ConfigurationClosure? = nil, cancelAction: Closure? = nil, onDirectionUpdated: ((Direction) -> Void)? = nil) {
 		self.init(frame: .zero)
 
 		self.anchorView = anchorView
 		self.selectionAction = selectionAction
+        self.onDirectionUpdated = onDirectionUpdated
 		self.dataSource = dataSource
 		self.topOffset = topOffset ?? .zero
 		self.bottomOffset = bottomOffset ?? .zero
@@ -581,7 +594,15 @@ extension DropDown {
 		xConstraint.constant = layout.x
 		yConstraint.constant = layout.y
 		widthConstraint.constant = layout.width
-		heightConstraint.constant = layout.visibleHeight
+        if let height = self.height {
+            if layout.visibleHeight >= height {
+                heightConstraint.constant = self.height ?? layout.visibleHeight
+            } else {
+                heightConstraint.constant = layout.visibleHeight
+            }
+        } else {
+            heightConstraint.constant = layout.visibleHeight
+        }
 
 		tableView.isScrollEnabled = layout.offscreenHeight > 0
 
@@ -713,7 +734,7 @@ extension DropDown {
 		
 		let visibleHeight = tableHeight - layout.offscreenHeight
 		let canBeDisplayed = visibleHeight >= minHeight
-
+        onDirectionUpdated?(direction)
 		return (layout.x, layout.y, layout.width, layout.offscreenHeight, visibleHeight, canBeDisplayed, direction)
 	}
 
@@ -754,10 +775,14 @@ extension DropDown {
 
 		let windowY = window.bounds.minY + DPDConstant.UI.HeightPadding
 
-		if y < windowY {
-			offscreenHeight = abs(y - windowY)
-			y = windowY
-		}
+        if y < windowY {
+            offscreenHeight = abs(y - windowY)
+            if let height = self.height {
+                y = anchorViewMaxY + topOffset.y - height
+            } else {
+                y = windowY
+            }
+        }
 		
 		let width = self.width ?? (anchorView?.plainView.bounds.width ?? fittingWidth()) - topOffset.x
 		
