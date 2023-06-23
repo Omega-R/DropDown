@@ -983,15 +983,20 @@ extension DropDown {
 
 //MARK: - UITableView
 
+extension UITableView {
+
+    var lastCellIndexPath: IndexPath? {
+        for section in (0..<self.numberOfSections).reversed() {
+            let rows = numberOfRows(inSection: section)
+            guard rows > 0 else { continue }
+            return IndexPath(row: rows - 1, section: section)
+        }
+        return nil
+    }
+}
+
 extension DropDown {
     
-    // Public function for removing last separator in DropDownTableView
-    // use with .separatorColor if needed
-    
-    public func removeLastSeparator() {
-        tableView.tableFooterView = UIView()
-    }
-
 	/**
 	Reloads all the cells.
 
@@ -1102,9 +1107,15 @@ extension DropDown: UITableViewDataSource, UITableViewDelegate {
 		let index = (indexPath as NSIndexPath).row
 
 		configureCell(cell, at: index)
+        configureSeparator(indexPath, tableView, cell: cell)
 
 		return cell
 	}
+    
+    fileprivate func configureSeparator(_ indexPath: IndexPath, _ tableView: UITableView, cell: DropDownCell) {
+        let emptyInset = UIEdgeInsets(top: 0, left: tableView.bounds.width + 1, bottom: 0, right: 0)
+        cell.separatorInset = indexPath == tableView.lastCellIndexPath ? emptyInset : .zero
+    }
 	
 	fileprivate func configureCell(_ cell: DropDownCell, at index: Int) {
 		if index >= 0 && index < localizationKeysDataSource.count {
