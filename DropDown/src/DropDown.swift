@@ -984,6 +984,13 @@ extension DropDown {
 //MARK: - UITableView
 
 extension DropDown {
+    
+    // Public function for removing last separator in DropDownTableView
+    // use with .separatorColor if needed
+    
+    public func removeLastSeparator() {
+        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: 1))
+    }
 
 	/**
 	Reloads all the cells.
