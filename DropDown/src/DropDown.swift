@@ -20,7 +20,7 @@ private typealias ComputeLayoutTuple = (x: CGFloat, y: CGFloat, width: CGFloat, 
 
 /// Can be `UIView` or `UIBarButtonItem`.
 @objc
-public protocol AnchorView: class {
+public protocol AnchorView: AnyObject {
 
 	var plainView: UIView { get }
 
@@ -989,7 +989,7 @@ extension DropDown {
     // use with .separatorColor if needed
     
     public func removeLastSeparator() {
-        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.size.width, height: 1))
+        tableView.tableFooterView = UIView()
     }
 
 	/**
