@@ -933,6 +933,10 @@ extension DropDown {
 			return false
 		}
 	}
+    
+    public func defaultShow() {
+        show()
+    }
 
 	/// Hides the drop down.
 	public func hide() {
